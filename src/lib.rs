@@ -462,11 +462,11 @@ impl EGraph {
     fn warn_prefixed_non_globals(
         &mut self,
         span: &Span,
-        canonical_name: &str,
+        name: &str,
     ) -> Result<(), TypeError> {
         if self.strict_mode {
             return Err(TypeError::NonGlobalPrefixed {
-                name: format!("{}{}", GLOBAL_NAME_PREFIX, canonical_name),
+                name: name.to_owned(),
                 span: span.clone(),
             });
         }
@@ -474,9 +474,12 @@ impl EGraph {
             return Ok(());
         }
         self.warned_about_global_prefix = true;
+        let canonical_name = name.strip_prefix(GLOBAL_NAME_PREFIX).unwrap_or(name);
         log::warn!(
-            "{}\nNon-global `{}` should not start with `{}`. Enable `--strict-mode` to turn this warning into an error. Suppressing additional warnings of this type.",
+            "{}\nNon-global `{}` should not start with `{}`. Global `{}` should start with `{}`. Enable `--strict-mode` to turn this warning into an error. Suppressing additional warnings of this type.",
             span,
+            name,
+            GLOBAL_NAME_PREFIX,
             canonical_name,
             GLOBAL_NAME_PREFIX
         );
