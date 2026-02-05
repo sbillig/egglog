@@ -16,6 +16,7 @@ use crate::*;
 
 pub type Z = core_relations::Boxed<BigInt>;
 pub type Q = core_relations::Boxed<BigRational>;
+pub type I256 = core_relations::Boxed<ruint::Uint<256, 4>>;
 pub type F = core_relations::Boxed<OrderedFloat<f64>>;
 pub type S = core_relations::Boxed<String>;
 
@@ -31,6 +32,8 @@ mod unit;
 pub use unit::*;
 mod i64;
 pub use self::i64::*;
+mod i256;
+pub use self::i256::*;
 mod f64;
 pub use self::f64::*;
 mod map;

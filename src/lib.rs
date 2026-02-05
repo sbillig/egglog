@@ -320,6 +320,7 @@ impl Default for EGraph {
         add_base_sort(&mut eg, StringSort, span!()).unwrap();
         add_base_sort(&mut eg, BoolSort, span!()).unwrap();
         add_base_sort(&mut eg, I64Sort, span!()).unwrap();
+        add_base_sort(&mut eg, I256Sort, span!()).unwrap();
         add_base_sort(&mut eg, F64Sort, span!()).unwrap();
         add_base_sort(&mut eg, BigIntSort, span!()).unwrap();
         add_base_sort(&mut eg, BigRatSort, span!()).unwrap();
