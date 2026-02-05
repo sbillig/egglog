@@ -1,0 +1,26 @@
+
+;; Hex / binary / octal literals parse as i256 via `i256-from-string`.
+
+(let $a 0x01)
+(let $b 0x02)
+(check (= (+ $a $a) $b))
+
+(check (= (* 0x10 0x10) 0x100))
+(check (= (/ 0x10 0x04) 0x04))
+(check (= (% 0x11 0x10) 0x01))
+
+(check (= (<< 0x01 8) 0x100))
+(check (= (>> 0x100 8) 0x1))
+
+(check (= (& 0b1010 0o7) 0b10))
+(check (= (| 0b1010 0o7) 0b1111))
+
+;; Bitwise not of zero is all-ones (-1 as a signed value).
+(check (= (not-i256 0x0) (i256 -1)))
+
+;; Signed comparison: -1 < 0
+(check (slt (i256 -1) (i256 0)))
+
+(check (= (to-string 0x10) "16"))
+(check (= (to-hex-string 0x10) "0x10"))
+

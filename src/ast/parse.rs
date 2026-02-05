@@ -774,6 +774,13 @@ impl Parser {
                 if *symbol == "_" {
                     self.symbol_gen.fresh(symbol)
                 } else {
+                    if Self::is_i256_literal(symbol) {
+                        return Ok(Expr::Call(
+                            span.clone(),
+                            "i256-from-string".to_owned(),
+                            vec![Expr::Lit(span.clone(), Literal::String(symbol.clone()))],
+                        ));
+                    }
                     self.ensure_symbol_not_reserved(symbol, span)?;
                     symbol.clone()
                 },
@@ -795,6 +802,25 @@ impl Parser {
                 }
             },
         })
+    }
+
+    fn is_i256_literal(symbol: &str) -> bool {
+        fn all_ascii_in(s: &str, valid: impl Fn(char) -> bool) -> bool {
+            !s.is_empty() && s.chars().all(valid)
+        }
+
+        let symbol = symbol.strip_prefix('-').unwrap_or(symbol);
+
+        if let Some(rest) = symbol.strip_prefix("0x").or_else(|| symbol.strip_prefix("0X")) {
+            return all_ascii_in(rest, |c| c.is_ascii_hexdigit() || c == '_');
+        }
+        if let Some(rest) = symbol.strip_prefix("0b").or_else(|| symbol.strip_prefix("0B")) {
+            return all_ascii_in(rest, |c| matches!(c, '0' | '1' | '_'));
+        }
+        if let Some(rest) = symbol.strip_prefix("0o").or_else(|| symbol.strip_prefix("0O")) {
+            return all_ascii_in(rest, |c| matches!(c, '0'..='7' | '_'));
+        }
+        false
     }
 
     pub fn rec_datatype(
